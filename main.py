@@ -1,3 +1,6 @@
+from termcolor import colored, cprint
+
+
 class Model:
     matrix: list
     winner: str
@@ -10,7 +13,7 @@ class Controller:
 
     def start_game(self):
         self.model.winner = ''
-        self.model.player = 1
+        self.model.player = "X"
         self.model.board_is_full = False
         self.model.matrix =  [
             ['-', '-', '-'],
@@ -35,17 +38,17 @@ class Controller:
 
     def move(self, move):
         if self.model.matrix[move[0] - 1][move[1] - 1] != "-":
-            print("Place is occupied. Please take another.")
+            print("Place is occupied. Please take another. \n")
             return
         else:
-            self.model.matrix[move[0] - 1][move[1] - 1] = "X" if self.model.player == 1 else "O"
+            self.model.matrix[move[0] - 1][move[1] - 1] = colored('X', 'blue') if self.model.player == "X" else colored('O', 'red')
         if self._valid_win(self.model.matrix):
-            self.model.winner = str(self.model.player)
+            self.model.winner = self.model.player
             return
         if self._matrix_is_full(self.model.matrix):
             self.model.board_is_full = 1
             return
-        self.model.player = 1 if self.model.player == 2 else 2
+        self.model.player = "X" if self.model.player == "O" else "O"
     
 
 class View:
@@ -55,25 +58,25 @@ class View:
         
     def start(self):
         self.controller.start_game()
-        print("Game start")
+        cprint("\n" + "Game start!", 'green')
         self._update()
         while self.model.winner == '' and self.model.board_is_full == 0:
             move = list(map(int, input().split()))
             controller.move(move)
             self._update()
-        print('Do you want play one more game? (y/n)?')
-        if input() == 'y': 
+        cprint('Do you want play one more game? (y/n)?', 'green')
+        if input().strip() == 'y': 
             self.start()
         else:
-            print('Thanks!')
+            cprint('Thanks for game!', 'green')
     def _update(self):
-        print('\n'.join('\t'.join(map(str, row)) for row in self.model.matrix))
+        print('\n' + '\n'.join('\t'.join(map(str, row)) for row in self.model.matrix) + '\n')
         if self.model.winner != '':
-            print(f'Game over. Player {self.model.winner} is winner!')
+            print(f'Game over. Player {colored(self.model.player, 'blue' if self.model.player == 'X' else 'red')} is winner!' '\n')
         elif self.model.board_is_full == 1:
-            print('Draw!')
+            cprint('Draw!', 'yellow')
         else:
-            print(f'Current player: {self.model.player}')
+            cprint(f'Current player: {colored(self.model.player, 'blue' if self.model.player == 'X' else 'red')} \n', 'green')
         
 
 
