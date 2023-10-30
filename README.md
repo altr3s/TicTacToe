@@ -1,2 +1,5 @@
 # TicTacToe
-## Before start game you need set up Python & its dependancies `pip install colorama'`
+## Running localy
+
+- Clone project
+- Set up python and its dependancies `pip install termcolor`
