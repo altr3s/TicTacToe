@@ -13,7 +13,7 @@ class Controller:
 
     def start_game(self):
         self.model.winner = ''
-        self.model.player = "X"
+        self.model.player = 'X'
         self.model.board_is_full = False
         self.model.matrix =  [
             ['-', '-', '-'],
@@ -41,14 +41,14 @@ class Controller:
             print("Place is occupied. Please take another. \n")
             return
         else:
-            self.model.matrix[move[0] - 1][move[1] - 1] = colored('X', 'blue') if self.model.player == "X" else colored('O', 'red')
+            self.model.matrix[move[0] - 1][move[1] - 1] = colored('X', 'blue') if self.model.player == 'X' else colored('O', 'red')
         if self._valid_win(self.model.matrix):
             self.model.winner = self.model.player
             return
         if self._matrix_is_full(self.model.matrix):
             self.model.board_is_full = 1
             return
-        self.model.player = "X" if self.model.player == "O" else "O"
+        self.model.player = 'X' if self.model.player == 'O' else 'O'
     
 
 class View:
@@ -58,7 +58,7 @@ class View:
         
     def start(self):
         self.controller.start_game()
-        cprint("\n" + "Game start!", 'green')
+        cprint('\n' + 'Game start!', 'green')
         self._update()
         while self.model.winner == '' and self.model.board_is_full == 0:
             move = list(map(int, input().split()))
@@ -72,11 +72,11 @@ class View:
     def _update(self):
         print('\n' + '\n'.join('\t'.join(map(str, row)) for row in self.model.matrix) + '\n')
         if self.model.winner != '':
-            print(f'Game over. Player {colored(self.model.player, 'blue' if self.model.player == 'X' else 'red')} is winner!' '\n')
+            print(f'Game over. Player {colored(self.model.player, "blue" if self.model.player == "X" else "red")} is winner!' '\n')
         elif self.model.board_is_full == 1:
             cprint('Draw!', 'yellow')
         else:
-            cprint(f'Current player: {colored(self.model.player, 'blue' if self.model.player == 'X' else 'red')} \n', 'green')
+            cprint(f'Current player: {colored(self.model.player, "blue" if self.model.player == "X" else "red")} \n', 'green')
         
 
 
