@@ -5,6 +5,7 @@ class Model:
     winner: str
     board_is_full: bool
     player: int
+    error: str
 
 class Controller:
     def __init__(self, model: Model):
@@ -19,6 +20,7 @@ class Controller:
             ['-', '-', '-'],
             ['-', '-', '-']
         ]
+        self.model.error = ''
 
     def _matrix_is_full(self, matrix: list) -> bool:
         self.model.board_is_full = not('-' in matrix[0] or '-' in matrix[1] or '-' in matrix[2])
@@ -35,18 +37,22 @@ class Controller:
         matrix[0][2] == matrix[1][1] == matrix[2][0] != '-':
             return True
 
-    def move(self, move):
-        if self.model.matrix[move[0] - 1][move[1] - 1] != "-":
-            print("Place is occupied. Please take another. \n")
-            return
-        else:
-            self.model.matrix[move[0] - 1][move[1] - 1] = colored('X', 'blue') if self.model.player == 'X' else colored('O', 'red')
+    def move(self, move: list):
+        try:
+            if self.model.matrix[move[0] - 1][move[1] - 1] != "-":
+                cprint('\nPlace is occupied. Please take another. \n', 'red')
+                return
+            else:
+                self.model.matrix[move[0] - 1][move[1] - 1] = colored('X', 'blue') if self.model.player == 'X' else colored('O', 'red')
+        except:
+            self.model.error = 'IndexError'
+            return 
         if self._valid_win(self.model.matrix):
             self.model.winner = self.model.player
             return
         if self._matrix_is_full(self.model.matrix):
             self.model.board_is_full = 1
-            return
+            return 
         self.model.player = 'X' if self.model.player == 'O' else 'O'
     
 
@@ -56,28 +62,22 @@ class View:
         self.controller = controller
         
     def start(self):
-        flag = True
         self.controller.start_game()
         cprint('\n' + 'Game start!', 'green')
         self._update()
         while self.model.winner == '' and self.model.board_is_full == 0:
-            try:
-                move = list(map(int, input().split()))
-                controller.move(move)
-                self._update()
-            except:
-                cprint('Error. Please, enter your move again. If you want exit, press "y"', 'green')
-                if input().strip().lower() == 'y':
-                    flag = False
-                    cprint('See you soon!', 'green')
-                    break
-        if flag:
-            cprint('Do you want play one more game? (y/any another key)', 'green')
-            if input().strip().lower() == 'y': 
-                self.start()
-            else:
-                cprint('Thanks for game!', 'green')
+            move = list(map(int, input().split()))
+            controller.move(move)
+            self._update()
+        cprint('Do you want play one more game? (y/any another key)', 'green')
+        if input().strip().lower() == 'y': 
+            self.start()
+        else:
+            cprint('Thanks for game!', 'green')
     def _update(self):
+        if self.model.error == 'IndexError':
+            cprint('\nError. Input is wrong. Try again', 'red')
+            self.model.error = ''
         print('\n' + '\n'.join('\t'.join(map(str, row)) for row in self.model.matrix) + '\n')
         if self.model.winner != '':
             print(f'Game over. Player {colored(self.model.player, "blue" if self.model.player == "X" else "red")} is winner!' '\n')
