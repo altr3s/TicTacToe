@@ -1,6 +1,5 @@
 from termcolor import colored, cprint
 
-
 class Model:
     matrix: list
     winner: str
@@ -57,18 +56,27 @@ class View:
         self.controller = controller
         
     def start(self):
+        flag = True
         self.controller.start_game()
         cprint('\n' + 'Game start!', 'green')
         self._update()
         while self.model.winner == '' and self.model.board_is_full == 0:
-            move = list(map(int, input().split()))
-            controller.move(move)
-            self._update()
-        cprint('Do you want play one more game? (y/n)?', 'green')
-        if input().strip() == 'y': 
-            self.start()
-        else:
-            cprint('Thanks for game!', 'green')
+            try:
+                move = list(map(int, input().split()))
+                controller.move(move)
+                self._update()
+            except:
+                cprint('Error. Please, enter your move again. If you want exit, press "y"', 'green')
+                if input().strip().lower() == 'y':
+                    flag = False
+                    cprint('See you soon!', 'green')
+                    break
+        if flag:
+            cprint('Do you want play one more game? (y/any another key)', 'green')
+            if input().strip().lower() == 'y': 
+                self.start()
+            else:
+                cprint('Thanks for game!', 'green')
     def _update(self):
         print('\n' + '\n'.join('\t'.join(map(str, row)) for row in self.model.matrix) + '\n')
         if self.model.winner != '':
@@ -78,7 +86,6 @@ class View:
         else:
             cprint(f'Current player: {colored(self.model.player, "blue" if self.model.player == "X" else "red")} \n', 'green')
         
-
 
 model = Model()
 controller = Controller(model)
