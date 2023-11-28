@@ -1,4 +1,7 @@
 from termcolor import colored, cprint
+import os
+import platform
+
 
 class Model:
     matrix: list
@@ -63,6 +66,7 @@ class View:
         
     def start(self):
         self.controller.start_game()
+        os.system("cls") if platform.system() == 'Windows' else os.system('clear')
         cprint('\n' + 'Game start!', 'green')
         self._update()
         while self.model.winner == '' and self.model.board_is_full == 0:
